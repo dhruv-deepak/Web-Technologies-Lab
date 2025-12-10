@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Input</title>
+</head>
+<body>
+
+    <h2>Enter URL</h2>
+
+    <input type="text" id="urlInput" placeholder="Enter URL here">
+    <button onclick="submitURL()">Enter</button>
+
+    <script>
+        function submitURL() {
+            const url = document.getElementById("urlInput").value;
+            alert("You entered: " + url);
+        }
+    </script>
+
+</body>
+</html>

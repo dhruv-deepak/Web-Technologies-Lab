@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT-AP Student Registration</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        header {
+            background: #0b2c61;
+            color: #fff;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .wrapper {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px 30px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 30px;
+        }
+
+        .info {
+            padding: 20px 24px;
+        }
+
+        .info h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #0b2c61;
+        }
+
+        .info p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .info ul {
+            margin-top: 10px;
+            padding-left: 18px;
+            font-size: 14px;
+        }
+
+        .info li {
+            margin-bottom: 6px;
+        }
+
+        .form-card {
+            background: #ffffff;
+            padding: 22px 24px 26px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+
+        .form-card h2 {
+            margin-bottom: 8px;
+            color: #0b2c61;
+        }
+
+        .form-card p {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0b2c61;
+            box-shadow: 0 0 0 2px rgba(11,44,97,0.15);
+        }
+
+        .btn-primary, .btn-secondary {
+            margin-top: 15px;
+            padding: 9px 18px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #0b2c61;
+            color: #fff;
+            margin-right: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #113c84;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e3ecff;
+            color: #0b2c61;
+        }
+
+        .btn-secondary:hover {
+            background: #d0ddff;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        footer {
+            background: #0b2c61;
+            color: #fff;
+            text-align: center;
+            padding: 12px 10px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">VIT AP</div>
+        <nav>
+            <a href="firstpage.html">Home</a>
+            <a href="secondpage.html">Student Registration</a>
+        </nav>
+    </header>
+
+    <div class="wrapper">
+        <div class="info">
+            <h1>Student Registration Portal</h1>
+            <p>
+                Please fill in your basic details to register as a student prospect for VIT-AP University. 
+                Ensure that the information you provide is accurate and valid, as it may be used for 
+                communication regarding admissions, events, and academic updates.
+            </p>
+            <p>
+                After submitting your details, our team may contact you via email or phone with further 
+                instructions and relevant information about programs, eligibility, and important dates.
+            </p>
+            <ul>
+                <li>✔ Use a valid and active email ID.</li>
+                <li>✔ Double-check your registration number and phone number.</li>
+                <li>✔ Keep the format rules in mind while filling the form.</li>
+            </ul>
+        </div>
+
+        <div class="form-card">
+            <h2>Enter Your Details</h2>
+            <p>All fields are mandatory.</p>
+
+            <form id="regForm">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your full name" required>
+
+                <label for="regNo">Registration Number</label>
+                <input type="text" id="regNo" maxlength="9" placeholder="e.g. 22BCE1234" required>
+
+                <label for="email">Email</label>
+                <input type="text" id="email" placeholder="yourname@example.com" required>
+
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" maxlength="10" placeholder="10-digit mobile number" required>
+
+                <button type="submit" class="btn-primary">Submit</button>
+                <button type="button" class="btn-secondary" onclick="window.location.href='firstpage.html'">
+                    Back to Home
+                </button>
+
+                <div class="note">
+                    By submitting this form, you agree to receive official communication from VIT-AP University
+                    on the contact details provided by you.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        © VIT-AP University · Demo Student Registration Website
+    </footer>
+
+    <script>
+        const form = document.getElementById("regForm");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const regNo = document.getElementById("regNo").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+
+            let errors = "";
+
+            // Name: only alphabets and spaces
+            const namePattern = /^[A-Za-z\s]+$/;
+            if (!namePattern.test(name)) {
+                errors += "❌ Name should contain only alphabets and spaces.\n";
+            }
+
+            // Registration number: exactly 9 alphanumeric characters
+            const regPattern = /^[A-Za-z0-9]{9}$/;
+            if (!regPattern.test(regNo)) {
+                errors += "❌ Registration number must be exactly 9 characters (letters and numbers only).\n";
+            }
+
+            // Email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errors += "❌ Enter a valid email address.\n";
+            }
+
+            // Phone: exactly 10 digits
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phonePattern.test(phone)) {
+                errors += "❌ Phone number must be exactly 10 digits.\n";
+            }
+
+            if (errors !== "") {
+                alert(errors);
+            } else {
+                alert("✅ Registration details are valid!\nThank you for registering.");
+                form.reset();
+            }
+        });
+    </script>
+
+</body>
+</html>
