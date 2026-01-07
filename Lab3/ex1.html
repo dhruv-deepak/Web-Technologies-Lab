@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Canvas Exercise</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f6f8;
+            margin: 0;
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="500" height="300"></canvas>
+
+<script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Filled rectangle (left)
+    ctx.fillStyle = "#4A90E2";
+    ctx.fillRect(50, 60, 120, 80);
+
+    // Filled circle (center)
+    ctx.beginPath();
+    ctx.arc(250, 100, 45, 0, 2 * Math.PI);
+    ctx.fillStyle = "#E94E77";
+    ctx.fill();
+
+    // Straight line (centered horizontally)
+    ctx.beginPath();
+    ctx.moveTo(100, 190);
+    ctx.lineTo(400, 190);
+    ctx.strokeStyle = "#2ECC71";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Text (centered)
+    ctx.font = "26px Arial";
+    ctx.fillStyle = "#333";
+    ctx.textAlign = "center";
+    ctx.fillText("HTML5 Canvas", canvas.width / 2, 250);
+</script>
+
+</body>
+</html>

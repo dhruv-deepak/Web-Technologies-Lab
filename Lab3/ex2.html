@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Audio and Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            width: 600px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .time {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        audio, video {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>🎵 Audio Player</h2>
+    <audio id="audioPlayer" controls>
+        <!-- ~5 second audio -->
+        <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+        Your browser does not support audio.
+    </audio>
+    <div class="time" id="audioTime">Current Time: 0:00</div>
+
+    <h2>🎬 Video Player</h2>
+    <video id="videoPlayer" controls>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        Your browser does not support video.
+    </video>
+    <div class="time" id="videoTime">Current Time: 0:00</div>
+
+</div>
+
+<script>
+    const audio = document.getElementById("audioPlayer");
+    const video = document.getElementById("videoPlayer");
+
+    const audioTime = document.getElementById("audioTime");
+    const videoTime = document.getElementById("videoTime");
+
+    function formatTime(seconds) {
+        let min = Math.floor(seconds / 60);
+        let sec = Math.floor(seconds % 60);
+        return min + ":" + (sec < 10 ? "0" + sec : sec);
+    }
+
+    audio.addEventListener("timeupdate", () => {
+        audioTime.textContent = "Current Time: " + formatTime(audio.currentTime);
+    });
+
+    video.addEventListener("timeupdate", () => {
+        videoTime.textContent = "Current Time: " + formatTime(video.currentTime);
+    });
+</script>
+
+</body>
+</html>
