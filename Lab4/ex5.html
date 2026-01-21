@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Multi-Stage Workflow</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --error: #ef4444;
+            --success: #10b981;
+            --gray-100: #f3f4f6;
+            --gray-300: #d1d5db;
+            --gray-700: #374151;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Main Card */
+        .form-container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 30px 40px 10px;
+        }
+
+        .progress-track {
+            background: var(--gray-100);
+            height: 6px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 10px;
+            width: 25%; /* Starts at 25% (1/4 stages) */
+            transition: width 0.4s ease;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--gray-300);
+            font-weight: 600;
+        }
+
+        .step-indicators span.active { color: var(--primary); }
+
+        /* Form Stages */
+        .form-body {
+            padding: 30px 40px;
+            min-height: 320px;
+        }
+
+        .stage {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .stage.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { margin: 0 0 10px; color: #1f2937; }
+        p.subtitle { margin: 0 0 25px; color: #6b7280; font-size: 0.95rem; }
+
+        /* Inputs */
+        .input-group { margin-bottom: 20px; position: relative; }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-100);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        input.invalid { border-color: var(--error); }
+        
+        .error-msg {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* Review Section Styling */
+        .review-grid {
+            background: var(--gray-100);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+        .review-item:last-child { border: none; margin: 0; }
+        .review-label { color: #6b7280; }
+        .review-value { font-weight: 600; color: #111; }
+
+        /* Navigation Buttons */
+        .form-footer {
+            padding: 20px 40px;
+            background: #f9fafb;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        button {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-prev {
+            background: transparent;
+            color: var(--gray-700);
+        }
+        .btn-prev:hover { background: #e5e7eb; }
+        .btn-prev:disabled { opacity: 0; pointer-events: none; }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+        .btn-next:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    
+    <div class="progress-container">
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        <div class="step-indicators">
+            <span class="active">Account</span>
+            <span>Personal</span>
+            <span>Details</span>
+            <span>Review</span>
+        </div>
+    </div>
+
+    <form id="workflow-form" onsubmit="return false;">
+        <div class="form-body">
+            
+            <div class="stage active" data-step="1">
+                <h2>Create Account</h2>
+                <p class="subtitle">Let's set up your login credentials.</p>
+                
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" id="email" placeholder="e.g., alex@example.com">
+                    <div class="error-msg">Please enter a valid email address.</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password" id="password" placeholder="Min 6 chars">
+                    <div class="error-msg">Password must be at least 6 characters.</div>
+                </div>
+            </div>
+
+            <div class="stage" data-step="2">
+                <h2>Personal Info</h2>
+                <p class="subtitle">Tell us a bit about yourself.</p>
+
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" name="fullname" id="fullname" placeholder="John Doe">
+                    <div class="error-msg">Full name is required (min 3 chars).</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" id="phone" placeholder="10 digit number">
+                    <div class="error-msg">Please enter a valid 10-digit phone number.</div>
+                </div>
+            </div>
+
+            <div class="stage" data-step="3">
+                <h2>Preferences</h2>
+                <p class="subtitle">Customize your experience.</p>
+
+                <div class="input-group">
+                    <label>Role</label>
+                    <select name="role" id="role">
+                        <option value="">Select a role...</option>
+                        <option value="Developer">Developer</option>
+                        <option value="Designer">Designer</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                    <div class="error-msg">Please select a role.</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Workspace Name</label>
+                    <input type="text" name="workspace" id="workspace" placeholder="e.g., My Studio">
+                    <div class="error-msg">Workspace name is required.</div>
+                </div>
+            </div>
+
+            <div class="stage" data-step="4">
+                <h2>Review & Submit</h2>
+                <p class="subtitle">Please verify your information before submitting.</p>
+
+                <div class="review-grid" id="review-content">
+                    </div>
+            </div>
+
+        </div>
+
+        <div class="form-footer">
+            <button class="btn-prev" id="prevBtn" onclick="changeStep(-1)" disabled>Back</button>
+            <button class="btn-next" id="nextBtn" onclick="changeStep(1)">Next Step</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // --- 1. State Management ---
+    let currentStep = 1;
+    const totalSteps = 4;
+    
+    // Temporary Storage
+    let formData = {
+        email: '', password: '',
+        fullname: '', phone: '',
+        role: '', workspace: ''
+    };
+
+    // DOM Elements
+    const stages = document.querySelectorAll('.stage');
+    const progressBar = document.getElementById('progress-bar');
+    const indicators = document.querySelectorAll('.step-indicators span');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const reviewContent = document.getElementById('review-content');
+
+    // --- 2. Validation Logic ---
+    function validateStage(step) {
+        let isValid = true;
+        const inputs = stages[step - 1].querySelectorAll('input, select');
+
+        inputs.forEach(input => {
+            const errorDiv = input.nextElementSibling;
+            let fieldValid = true;
+
+            // Reset styles
+            input.classList.remove('invalid');
+            if(errorDiv) errorDiv.style.display = 'none';
+
+            // Specific Rules
+            if (input.id === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                fieldValid = emailRegex.test(input.value);
+            } 
+            else if (input.id === 'password') {
+                fieldValid = input.value.length >= 6;
+            }
+            else if (input.id === 'fullname') {
+                fieldValid = input.value.trim().length >= 3;
+            }
+            else if (input.id === 'phone') {
+                const phoneRegex = /^\d{10}$/; // Simple 10 digit check
+                fieldValid = phoneRegex.test(input.value);
+            }
+            else if (input.value.trim() === '') {
+                // Generic required check for Role/Workspace
+                fieldValid = false;
+            }
+
+            if (!fieldValid) {
+                isValid = false;
+                input.classList.add('invalid');
+                if(errorDiv) errorDiv.style.display = 'block';
+            } else {
+                // Save to temp storage if valid
+                formData[input.name] = input.value;
+            }
+        });
+
+        return isValid;
+    }
+
+    // --- 3. Navigation Control ---
+    function changeStep(direction) {
+        // If moving forward, validate current step first
+        if (direction === 1) {
+            if (!validateStage(currentStep)) return; // Stop if invalid
+            
+            // If we are at the last step (Submission)
+            if (currentStep === totalSteps) {
+                alert("Form Submitted Successfully!\n" + JSON.stringify(formData, null, 2));
+                location.reload(); // Reset for demo
+                return;
+            }
+        }
+
+        // Update Step Counter
+        currentStep += direction;
+
+        // Update UI
+        updateUI();
+    }
+
+    function updateUI() {
+        // 1. Show/Hide Stages
+        stages.forEach((stage, index) => {
+            if (index + 1 === currentStep) {
+                stage.classList.add('active');
+            } else {
+                stage.classList.remove('active');
+            }
+        });
+
+        // 2. Update Progress Bar
+        const progressPercentage = (currentStep / totalSteps) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+
+        // 3. Update Text Indicators
+        indicators.forEach((ind, index) => {
+            if (index < currentStep) ind.classList.add('active');
+            else ind.classList.remove('active');
+        });
+
+        // 4. Update Buttons
+        prevBtn.disabled = currentStep === 1;
+        
+        if (currentStep === totalSteps) {
+            nextBtn.textContent = 'Confirm & Submit';
+            nextBtn.style.backgroundColor = '#10b981'; // Green for submit
+            populateReview();
+        } else {
+            nextBtn.textContent = 'Next Step';
+            nextBtn.style.backgroundColor = ''; // Reset to default
+        }
+    }
+
+    // --- 4. Review Section Population ---
+    function populateReview() {
+        reviewContent.innerHTML = `
+            <div class="review-item">
+                <span class="review-label">Name</span>
+                <span class="review-value">${formData.fullname}</span>
+            </div>
+            <div class="review-item">
+                <span class="review-label">Email</span>
+                <span class="review-value">${formData.email}</span>
+            </div>
+            <div class="review-item">
+                <span class="review-label">Phone</span>
+                <span class="review-value">${formData.phone}</span>
+            </div>
+            <div class="review-item">
+                <span class="review-label">Role</span>
+                <span class="review-value">${formData.role}</span>
+            </div>
+            <div class="review-item">
+                <span class="review-label">Workspace</span>
+                <span class="review-value">${formData.workspace}</span>
+            </div>
+        `;
+    }
+</script>
+
+</body>
+</html>
