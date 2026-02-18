@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Product Inventory System (JSON + Fetch)</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #232526, #414345);
+    padding: 30px;
+    color: white;
+}
+
+.container {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+h2 { text-align: center; }
+
+input, select {
+    padding: 7px;
+    margin: 5px;
+}
+
+button {
+    padding: 6px 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.add { background: green; }
+.update { background: orange; }
+.delete { background: red; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #333;
+    color: white;
+}
+
+.low-stock {
+    background-color: #ffcccc;
+    font-weight: bold;
+}
+
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.success { color: green; }
+.error { color: red; }
+
+.total-value {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>📦 Product Inventory System (JSON + Fetch)</h2>
+
+<div>
+    <input type="text" id="prodId" placeholder="Product ID">
+    <input type="text" id="prodName" placeholder="Name">
+    <input type="text" id="prodCategory" placeholder="Category">
+    <input type="number" id="prodPrice" placeholder="Price">
+    <input type="number" id="prodStock" placeholder="Stock">
+    <button class="add" onclick="addProduct()">Add Product</button>
+</div>
+
+<div>
+    <input type="text" id="searchCategory" placeholder="Search by Category">
+    <button onclick="searchByCategory()">Search</button>
+    <button onclick="displayProducts()">Reset</button>
+</div>
+
+<div class="message" id="message"></div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="inventoryTable"></tbody>
+</table>
+
+<div class="total-value" id="totalValue"></div>
+
+</div>
+
+<script>
+
+let products = [];
+
+// LOAD JSON using Fetch
+function loadProducts() {
+    fetch("inventory.json")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to load inventory.json");
+            }
+            return response.json();
+        })
+        .then(data => {
+            products = data;
+            displayProducts();
+        })
+        .catch(error => {
+            showMessage("Error: " + error.message, "error");
+        });
+}
+
+// DISPLAY PRODUCTS
+function displayProducts(filtered = null) {
+    const table = document.getElementById("inventoryTable");
+    table.innerHTML = "";
+
+    const data = filtered || products;
+
+    let total = 0;
+
+    data.forEach(product => {
+
+        total += product.price * product.stock;
+
+        const lowStockClass = product.stock <= 5 ? "low-stock" : "";
+
+        table.innerHTML += `
+        <tr class="${lowStockClass}">
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${product.category}</td>
+            <td>₹${product.price}</td>
+            <td>${product.stock}</td>
+            <td>
+                <button class="update" onclick="editProduct('${product.id}')">Edit</button>
+                <button class="delete" onclick="deleteProduct('${product.id}')">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("totalValue").textContent =
+        "Total Inventory Value: ₹" + total;
+}
+
+// ADD PRODUCT
+function addProduct() {
+    const id = prodId.value.trim();
+    const name = prodName.value.trim();
+    const category = prodCategory.value.trim();
+    const price = parseFloat(prodPrice.value);
+    const stock = parseInt(prodStock.value);
+
+    if (!id || !name || !category || isNaN(price) || isNaN(stock)) {
+        showMessage("Invalid input. Please fill all fields correctly.", "error");
+        return;
+    }
+
+    if (products.some(p => p.id === id)) {
+        showMessage("Product ID already exists.", "error");
+        return;
+    }
+
+    products.push({ id, name, category, price, stock });
+
+    showMessage("Product added successfully.", "success");
+    displayProducts();
+}
+
+// EDIT PRODUCT
+function editProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) {
+        showMessage("Product not found.", "error");
+        return;
+    }
+
+    const newPrice = prompt("Enter new price:", product.price);
+    const newStock = prompt("Enter new stock:", product.stock);
+
+    if (!isNaN(newPrice)) product.price = parseFloat(newPrice);
+    if (!isNaN(newStock)) product.stock = parseInt(newStock);
+
+    showMessage("Product updated successfully.", "success");
+    displayProducts();
+}
+
+// DELETE PRODUCT
+function deleteProduct(id) {
+    products = products.filter(p => p.id !== id);
+    showMessage("Product deleted successfully.", "success");
+    displayProducts();
+}
+
+// SEARCH BY CATEGORY
+function searchByCategory() {
+    const category = searchCategory.value.trim().toLowerCase();
+    if (!category) {
+        showMessage("Enter category to search.", "error");
+        return;
+    }
+
+    const filtered = products.filter(p =>
+        p.category.toLowerCase().includes(category)
+    );
+
+    displayProducts(filtered);
+}
+
+// MESSAGE
+function showMessage(msg, type) {
+    const message = document.getElementById("message");
+    message.textContent = msg;
+    message.className = "message " + type;
+}
+
+// INIT
+loadProducts();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Student Record System (JSON + Fetch)</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1f4037, #99f2c8);
+    padding: 30px;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 950px;
+    margin: auto;
+}
+
+h2 {
+    text-align: center;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+}
+
+button {
+    padding: 6px 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.add { background: green; }
+.update { background: orange; }
+.delete { background: red; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #333;
+    color: white;
+}
+
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.success { color: green; }
+.error { color: red; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>🎓 Student Record System (Local JSON + Fetch)</h2>
+
+<div>
+    <input type="text" id="studentId" placeholder="Student ID">
+    <input type="text" id="studentName" placeholder="Name">
+    <input type="text" id="studentCourse" placeholder="Course">
+    <input type="number" id="studentMarks" placeholder="Marks">
+    <button class="add" onclick="addStudent()">Add Student</button>
+</div>
+
+<div class="message" id="message"></div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Marks</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="studentTable"></tbody>
+</table>
+
+</div>
+
+<script>
+
+let students = [];
+
+// READ (Fetch JSON)
+function loadStudents() {
+    fetch("students.json")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to load JSON file.");
+            }
+            return response.json();   // Requirement satisfied
+        })
+        .then(data => {
+            students = data;
+            displayStudents();
+        })
+        .catch(error => {
+            showMessage("JSON Parsing / Fetch Error: " + error.message, "error");
+        });
+}
+
+// DISPLAY TABLE
+function displayStudents() {
+    const table = document.getElementById("studentTable");
+    table.innerHTML = "";
+
+    students.forEach(student => {
+        table.innerHTML += `
+        <tr>
+            <td>${student.id}</td>
+            <td>${student.name}</td>
+            <td>${student.course}</td>
+            <td>${student.marks}</td>
+            <td>
+                <button class="update" onclick="updateStudent('${student.id}')">Update</button>
+                <button class="delete" onclick="deleteStudent('${student.id}')">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+// CREATE
+function addStudent() {
+    const id = studentId.value.trim();
+    const name = studentName.value.trim();
+    const course = studentCourse.value.trim();
+    const marks = studentMarks.value.trim();
+
+    if (!id || !name || !course || !marks) {
+        showMessage("All fields are required.", "error");
+        return;
+    }
+
+    if (students.some(s => s.id === id)) {
+        showMessage("Student ID already exists.", "error");
+        return;
+    }
+
+    students.push({
+        id,
+        name,
+        course,
+        marks: parseInt(marks)
+    });
+
+    showMessage("Student added successfully.", "success");
+    displayStudents();
+}
+
+// UPDATE
+function updateStudent(id) {
+    const student = students.find(s => s.id === id);
+
+    if (!student) {
+        showMessage("Student not found.", "error");
+        return;
+    }
+
+    const newCourse = prompt("Enter new course:", student.course);
+    const newMarks = prompt("Enter new marks:", student.marks);
+
+    if (newCourse) student.course = newCourse;
+    if (newMarks && !isNaN(newMarks)) student.marks = parseInt(newMarks);
+
+    showMessage("Student updated successfully.", "success");
+    displayStudents();
+}
+
+// DELETE
+function deleteStudent(id) {
+    students = students.filter(s => s.id !== id);
+    showMessage("Student deleted successfully.", "success");
+    displayStudents();
+}
+
+function showMessage(msg, type) {
+    const message = document.getElementById("message");
+    message.textContent = msg;
+    message.className = "message " + type;
+}
+
+// Initial Load
+loadStudents();
+
+</script>
+
+</body>
+</html>
