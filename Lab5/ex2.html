@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJAX Product Search</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: white;
+        width: 600px;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 40px 12px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 8px rgba(102,126,234,0.5);
+    }
+
+    .loading {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        color: #667eea;
+    }
+
+    .results {
+        margin-top: 20px;
+    }
+
+    .product-card {
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        background: #f8f9ff;
+        border-left: 5px solid #667eea;
+        transition: 0.3s;
+    }
+
+    .product-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-name {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .price {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .category {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .message {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .error {
+        color: red;
+    }
+
+    .no-results {
+        color: #ff6b6b;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔍 Live Product Search</h2>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <span id="loadingText" class="loading"></span>
+    </div>
+
+    <div class="results" id="results"></div>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const resultsDiv = document.getElementById("results");
+    const messageDiv = document.getElementById("message");
+    const loadingText = document.getElementById("loadingText");
+
+    // Simulated local JSON data
+    const products = [
+        { name: "iPhone 15", price: 999, category: "Electronics" },
+        { name: "Samsung Galaxy S23", price: 899, category: "Electronics" },
+        { name: "Nike Running Shoes", price: 120, category: "Footwear" },
+        { name: "Adidas Hoodie", price: 80, category: "Clothing" },
+        { name: "Dell XPS 13", price: 1100, category: "Computers" },
+        { name: "Wooden Study Table", price: 250, category: "Furniture" }
+    ];
+
+    let debounceTimer;
+
+    searchInput.addEventListener("input", function () {
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(() => {
+            performSearch(this.value.trim());
+        }, 500); // Debounce delay (500ms)
+    });
+
+    function performSearch(query) {
+
+        resultsDiv.innerHTML = "";
+        messageDiv.textContent = "";
+
+        if (query === "") return;
+
+        loadingText.textContent = "Loading...";
+
+        // Simulated AJAX using Fetch-style Promise
+        new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (Math.random() < 0.05) {
+                    reject("Network error");
+                } else {
+                    resolve(products);
+                }
+            }, 700);
+        })
+        .then(data => {
+
+            loadingText.textContent = "";
+
+            const filtered = data.filter(product =>
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.category.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                messageDiv.textContent = "No results found";
+                messageDiv.className = "message no-results";
+                return;
+            }
+
+            filtered.forEach(product => {
+                const card = document.createElement("div");
+                card.classList.add("product-card");
+
+                card.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="price">$${product.price}</div>
+                    <div class="category">${product.category}</div>
+                `;
+
+                resultsDiv.appendChild(card);
+            });
+        })
+        .catch(error => {
+            loadingText.textContent = "";
+            messageDiv.textContent = "Failed to fetch products. Please try again.";
+            messageDiv.className = "message error";
+        });
+    }
+</script>
+
+</body>
+</html>
