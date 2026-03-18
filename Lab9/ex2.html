@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Object App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f4f4f4;
+            border-radius: 10px;
+        }
+
+        .output p {
+            margin: 5px 0;
+            font-size: 15px;
+        }
+
+        .grade {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Form</h2>
+
+    <input type="number" id="id" placeholder="Enter ID">
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" id="dept" placeholder="Enter Department">
+    <input type="number" id="marks" placeholder="Enter Marks">
+
+    <button onclick="generateStudent()">Generate</button>
+
+    <div class="output" id="output"></div>
+</div>
+
+<script>
+function generateStudent() {
+    // Get input values
+    const student = {
+        id: document.getElementById("id").value,
+        name: document.getElementById("name").value,
+        department: document.getElementById("dept").value,
+        marks: Number(document.getElementById("marks").value)
+    };
+
+    // Destructuring
+    const { id, name, department, marks } = student;
+
+    // Grade logic
+    let grade;
+    if (marks >= 90) grade = "A";
+    else if (marks >= 75) grade = "B";
+    else if (marks >= 60) grade = "C";
+    else grade = "D";
+
+    // Spread operator
+    const updatedStudent = {
+        ...student,
+        grade: grade
+    };
+
+    // Display output
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerHTML = `
+        <p><strong>ID:</strong> ${id}</p>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Department:</strong> ${department}</p>
+        <p><strong>Marks:</strong> ${marks}</p>
+        <p class="grade"><strong>Grade:</strong> ${grade}</p>
+    `;
+
+    // Console (for your assignment requirement)
+    console.log(id, name, department, marks);
+    console.log(updatedStudent);
+}
+</script>
+
+</body>
+</html>
