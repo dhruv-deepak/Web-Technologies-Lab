@@ -1,0 +1,13 @@
+{
+  "name": "express-mongodb-ex3",
+  "version": "1.0.0",
+  "description": "Express MongoDB CRUD",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.6.0"
+  }
+}

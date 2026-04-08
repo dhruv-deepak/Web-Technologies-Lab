@@ -1,0 +1,12 @@
+{
+  "name": "express-middleware-ex2",
+  "version": "1.0.0",
+  "description": "Express middleware demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
